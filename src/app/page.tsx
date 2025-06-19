@@ -1,6 +1,22 @@
 "use client";
 
-import { LocationReceiveArea, LocationSendArea } from "@/components";
+import dynamic from "next/dynamic";
+
+const LocationReceiveArea = dynamic(
+  () =>
+    import("@/components/location-receive-area").then(
+      (mod) => mod.LocationReceiveArea
+    ),
+  { ssr: false }
+);
+
+const LocationSendArea = dynamic(
+  () =>
+    import("@/components/location-send-area").then(
+      (mod) => mod.LocationSendArea
+    ),
+  { ssr: false }
+);
 
 export default function Home() {
   return (
