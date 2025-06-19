@@ -1,7 +1,6 @@
 "use client";
 
-import { LocationReceiveArea } from "@/components/location-receive-area";
-import { LocationSendArea } from "@/components/location-send-area";
+import { LocationReceiveArea, LocationSendArea } from "@/components";
 
 export default function Home() {
   return (

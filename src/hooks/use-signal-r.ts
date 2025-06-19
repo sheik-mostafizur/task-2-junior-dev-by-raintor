@@ -1,14 +1,15 @@
 "use client";
+
 import { useEffect, useRef } from "react";
 import * as signalR from "@microsoft/signalr";
 
-type LatLonData = {
-  userName: string;
-  lat: number;
-  lon: number;
-};
+import { socketEventNames } from "@/constant";
+import { LocationShareDetails } from "@/types";
+import { defaultValues } from "@/configs";
 
-export const useSignalR = (onReceiveLatLon: (data: LatLonData) => void) => {
+export const useSignalR = (
+  onReceiveLatLon: (data: LocationShareDetails) => void
+) => {
   const connectionRef = useRef<signalR.HubConnection | null>(null);
   const handlerRef = useRef(onReceiveLatLon);
 
@@ -19,7 +20,7 @@ export const useSignalR = (onReceiveLatLon: (data: LatLonData) => void) => {
   useEffect(() => {
     const connect = async () => {
       const connection = new signalR.HubConnectionBuilder()
-        .withUrl("https://tech-test.raintor.com/Hub", {
+        .withUrl(defaultValues.backendUrl, {
           transport: signalR.HttpTransportType.WebSockets,
           skipNegotiation: true,
         })
@@ -27,9 +28,12 @@ export const useSignalR = (onReceiveLatLon: (data: LatLonData) => void) => {
         .configureLogging(signalR.LogLevel.Information)
         .build();
 
-      connection.on("ReceiveLatLon", (data: LatLonData) => {
-        handlerRef.current(data);
-      });
+      connection.on(
+        socketEventNames.receiveLatLon,
+        (data: LocationShareDetails) => {
+          handlerRef.current(data);
+        }
+      );
 
       try {
         await connection.start();
@@ -47,8 +51,17 @@ export const useSignalR = (onReceiveLatLon: (data: LatLonData) => void) => {
     };
   }, []);
 
-  const sendLatLon = (lat: number, lon: number, userName: string) => {
-    connectionRef.current?.invoke("SendLatLon", lat, lon, userName);
+  const sendLatLon = (
+    lat: LocationShareDetails["lat"],
+    lon: LocationShareDetails["lon"],
+    userName: LocationShareDetails["userName"]
+  ) => {
+    connectionRef.current?.invoke(
+      socketEventNames.sendLatLon,
+      lat,
+      lon,
+      userName
+    );
   };
 
   return { sendLatLon };

@@ -7,7 +7,11 @@ interface InputFieldProps
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ id, label, ...rest }) => (
+export const InputField: React.FC<InputFieldProps> = ({
+  id,
+  label,
+  ...rest
+}) => (
   <div>
     <label
       htmlFor={id}
@@ -23,5 +27,3 @@ const InputField: React.FC<InputFieldProps> = ({ id, label, ...rest }) => (
     />
   </div>
 );
-
-export default InputField;
